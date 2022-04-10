@@ -1,9 +1,6 @@
 package com.example.winenotes.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface NoteDao {
@@ -13,6 +10,9 @@ interface NoteDao {
 
     @Update
     fun updateNote(note: Note)
+
+    @Delete
+    fun deleteNote(note: Note)
 
     @Query("SELECT * FROM note")
     fun getAllNotes(): List<Note>
