@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#84FFFF"
+    android:background="#F0F4C3"
     tools:context=".NoteActivity">
 
     <EditText
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="#84FFFF"
+        android:background="#F0F4C3"
         android:hint="Enter Title"
         android:textColor="#000000"
         android:textSize="36sp"
@@ -52,7 +52,7 @@
                 android:id="@+id/note_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#84FFFF"
+                android:background="#F0F4C3"
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="Enter note here"

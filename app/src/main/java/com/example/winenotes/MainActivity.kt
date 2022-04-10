@@ -3,8 +3,10 @@ package com.example.winenotes
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -35,7 +37,10 @@ class MainActivity : AppCompatActivity() {
         val dividerItemDecoration = DividerItemDecoration(
             applicationContext, layoutManager.getOrientation()
         )
+
+
         binding.recyclerview.addItemDecoration(dividerItemDecoration)
+
 
         adapter = MyAdapter()
         binding.recyclerview.setAdapter(adapter)
@@ -191,7 +196,11 @@ class MainActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val note = notes[position]
-            holder.view.setText(note.title)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                holder.view.setText(Html.fromHtml("<h1>${note.title}</h1>\n${note.lastModified}", Html.FROM_HTML_MODE_COMPACT).trim())
+            } else {
+                holder.view.setText(Html.fromHtml("<h1>${note.title}</h1>\n${note.lastModified}").trim())
+            }
         }
 
         override fun getItemCount(): Int {
