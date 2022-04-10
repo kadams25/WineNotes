@@ -3,7 +3,7 @@
     android:id="@+id/note_textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#18FFFF"
+    android:background="#A7FFEB"
     android:padding="8dp"
     android:text="TextView"
     android:textColor="#000000"
