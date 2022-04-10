@@ -79,23 +79,8 @@ class MainActivity : AppCompatActivity() {
             result : ActivityResult ->
 
             if (result.resultCode == Activity.RESULT_OK) {
-                val intent = result.data
-                val noteId = intent!!.getLongExtra(
-                    getString(R.string.intent_key_note_id),
-                    -1L
-                )
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val note = AppDatabase.getDatabase(applicationContext)
-                        .noteDao()
-                        .getNote(noteId)
-                    notes.add(note)
-                    val position = notes.indexOf(note)
-
-                    withContext(Dispatchers.Main) {
-                        adapter.notifyItemChanged(position)
-                    }
-                }
+                loadAllNotes()
             }
         }
 
