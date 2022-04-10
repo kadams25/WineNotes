@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#84FFFF"
     tools:context=".NoteActivity">
 
     <TextView
@@ -39,14 +40,18 @@
                 android:id="@+id/note_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#84FFFF"
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="Type note here"
                 android:inputType="textMultiLine"
+                android:lineSpacingExtra="8sp"
                 android:padding="16dp"
                 android:textColor="#000000"
+                android:textColorHint="#4F5352"
                 android:textSize="24sp"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck"
+                android:importantForAutofill="no" />
         </LinearLayout>
     </ScrollView>
 
@@ -58,12 +63,13 @@
         android:layout_marginTop="16dp"
         android:text="Last modified:"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        tools:ignore="TextContrastCheck" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_height="3dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="1dp"
