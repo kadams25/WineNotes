@@ -17,7 +17,7 @@ interface NoteDao {
     @Query("SELECT * FROM note")
     fun getAllNotes(): List<Note>
 
-    @Query("SELECT * FROM NOTE ORDER BY title")
+    @Query("SELECT * FROM NOTE ORDER BY title COLLATE NOCASE ASC")
     fun sortAllNotesByTitle(): List<Note>
 
     @Query("SELECT * FROM NOTE ORDER BY last_modified DESC")

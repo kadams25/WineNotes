@@ -57,18 +57,28 @@ class NoteActivity : AppCompatActivity() {
         setTitle("$purpose Note")
     }
 
+    private fun getTime() {
+        val now : Date = Date()
+        val databaseDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        databaseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+        var dateString : String = databaseDateFormat.format(now)
+        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        parser.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+        val dateInDatabase : Date = parser.parse(dateString)
+        val displayFormat = SimpleDateFormat("HH:mm a MM/yyyy ")
+        val displayString : String = displayFormat.format(dateInDatabase)
+
+        binding.modDateTextView.setText(getString(R.string.last_modified, displayString))
+    }
+
     override fun onBackPressed() {
-
-//        val now : Date = Date()
-//
-//        val databaseDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-//        databaseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
-//
-//        var dateString : String = databaseDateFormat.format(now)
-
+        getTime()
         val note = binding.noteEditText.getText().toString().trim()
         val title = binding.titleEditText.getText().toString().trim()
         val lastModified = binding.modDateTextView.getText().toString().trim()
+
         if (title.isEmpty()) {
             Toast.makeText(applicationContext,
             "Title cannot be empty", Toast.LENGTH_LONG).show()
@@ -89,6 +99,7 @@ class NoteActivity : AppCompatActivity() {
                 val noteInfo = Note(noteId, title, note, lastModified)
 
                 noteDao.updateNote(noteInfo)
+
             }
 
             val intent = Intent()

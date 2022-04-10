@@ -56,11 +56,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun sortNotes() {
+    private fun sortNotesByTitle() {
         CoroutineScope(Dispatchers.IO).launch {
             val db = AppDatabase.getDatabase(applicationContext)
             val dao = db.noteDao()
             val results = dao.sortAllNotesByTitle()
+
+            withContext(Dispatchers.Main) {
+                notes.clear()
+                notes.addAll(results)
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun sortNotesByDate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.noteDao()
+            val results = dao.sortAllNotesByModified()
 
             withContext(Dispatchers.Main) {
                 notes.clear()
@@ -81,10 +95,10 @@ class MainActivity : AppCompatActivity() {
             addNewNote()
             return true
         } else if (item.getItemId() == R.id.menu_sortDate) {
-
+            sortNotesByDate()
             return true
         } else if (item.getItemId() == R.id.menu_sortTtile) {
-            sortNotes()
+            sortNotesByTitle()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -117,6 +131,8 @@ class MainActivity : AppCompatActivity() {
         )
         startForAddResult.launch(intent)
     }
+
+
 
     inner class MyViewHolder(val view: TextView) :
         RecyclerView.ViewHolder(view),
@@ -155,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val note = notes[position]
-            holder.view.setText("${note.title}")
+            holder.view.setText(note.title)
         }
 
         override fun getItemCount(): Int {
