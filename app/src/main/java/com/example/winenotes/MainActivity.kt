@@ -56,6 +56,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun sortNotes() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.noteDao()
+            val results = dao.sortAllNotesByTitle()
+
+            withContext(Dispatchers.Main) {
+                notes.clear()
+                notes.addAll(results)
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
@@ -67,8 +81,10 @@ class MainActivity : AppCompatActivity() {
             addNewNote()
             return true
         } else if (item.getItemId() == R.id.menu_sortDate) {
+
             return true
         } else if (item.getItemId() == R.id.menu_sortTtile) {
+            sortNotes()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -80,6 +96,15 @@ class MainActivity : AppCompatActivity() {
 
             if (result.resultCode == Activity.RESULT_OK) {
 
+                loadAllNotes()
+            }
+        }
+
+    private val startForUpdateResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result : ActivityResult ->
+
+            if (result.resultCode == Activity.RESULT_OK) {
                 loadAllNotes()
             }
         }
@@ -102,7 +127,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onClick(view: View?) {
-            TODO("Not yet implemented")
+            val intent = Intent(applicationContext, NoteActivity::class.java)
+
+            intent.putExtra(
+                getString(R.string.intent_purpose_key),
+                getString(R.string.intent_purpose_update_note)
+            )
+
+            val note = notes[adapterPosition]
+            intent.putExtra(
+                getString(R.string.intent_key_note_id),
+                note.id
+            )
+
+            startForUpdateResult.launch(intent)
         }
     }
 

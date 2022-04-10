@@ -3,10 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/activity_main.xml" value="0.5177083333333333" />
-        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/activity_note.xml" value="0.536" />
-        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/note_view.xml" value="0.6" />
-        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/menu/main_menu.xml" value="0.5177083333333333" />
+        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/activity_main.xml" value="0.4" />
+        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/activity_note.xml" value="0.4" />
+        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/layout/note_view.xml" value="0.4" />
+        <entry key="..\:/Users/Kyle A/AndroidStudioProjects/WineNotes/app/src/main/res/menu/main_menu.xml" value="0.4" />
       </map>
     </option>
   </component>

@@ -1,9 +1,11 @@
 package com.example.winenotes
 
 import android.content.Intent
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.example.winenotes.database.AppDatabase
 import com.example.winenotes.database.Note
@@ -12,11 +14,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteBinding
 
     private var purpose : String? = ""
+    private var noteId : Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +33,39 @@ class NoteActivity : AppCompatActivity() {
             getString(R.string.intent_purpose_key)
         )
 
-        setTitle("${purpose} Name")
+        if (purpose.equals(getString(R.string.intent_purpose_update_note))) {
+            noteId = intent.getLongExtra(
+                getString(R.string.intent_key_note_id),
+            -1
+            )
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val note = AppDatabase.getDatabase(applicationContext)
+                    .noteDao()
+                    .getNote(noteId)
+
+                withContext(Dispatchers.Main) {
+                    binding.titleEditText.setText(note.title)
+                    binding.noteEditText.setText(note.notes)
+                    binding.modDateTextView.setText(note.lastModified)
+                }
+            }
+        } else {
+            binding.modDateTextView.visibility = View.GONE
+        }
+
+        setTitle("$purpose Note")
     }
 
     override fun onBackPressed() {
+
+//        val now : Date = Date()
+//
+//        val databaseDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+//        databaseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
+//
+//        var dateString : String = databaseDateFormat.format(now)
+
         val note = binding.noteEditText.getText().toString().trim()
         val title = binding.titleEditText.getText().toString().trim()
         val lastModified = binding.modDateTextView.getText().toString().trim()
@@ -45,8 +79,6 @@ class NoteActivity : AppCompatActivity() {
             val noteDao = AppDatabase.getDatabase(applicationContext)
                 .noteDao()
 
-            var noteId : Long
-
             if (purpose.equals(getString(R.string.intent_purpose_add_note))) {
                 // add new note
                 val noteInfo = Note(0, title, note, lastModified)
@@ -54,7 +86,9 @@ class NoteActivity : AppCompatActivity() {
                 Log.i("STATUS", "inserted new note ${noteInfo}")
             } else {
                 //update current note
-                TODO("Not implemented")
+                val noteInfo = Note(noteId, title, note, lastModified)
+
+                noteDao.updateNote(noteInfo)
             }
 
             val intent = Intent()
