@@ -1,20 +1,21 @@
 package com.example.winenotes
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.winenotes.database.AppDatabase
 import com.example.winenotes.database.Note
 import com.example.winenotes.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -28,16 +29,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val layoutManager = LinearLayoutManager(this)
-        binding.myRecyclerView.setLayoutManager(layoutManager)
-        binding.myRecyclerView.setHasFixedSize(true)
+        binding.recyclerview.setLayoutManager(layoutManager)
 
-        val divider = DividerItemDecoration(
-            applicationContext, layoutManager.orientation
+        val dividerItemDecoration = DividerItemDecoration(
+            applicationContext, layoutManager.getOrientation()
         )
-        binding.myRecyclerView.addItemDecoration(divider)
+        binding.recyclerview.addItemDecoration(dividerItemDecoration)
 
         adapter = MyAdapter()
-        binding.myRecyclerView.setAdapter(adapter)
+        binding.recyclerview.setAdapter(adapter)
 
         loadAllNotes()
     }
@@ -74,9 +74,38 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private val startForAddResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result : ActivityResult ->
+
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                val noteId = intent!!.getLongExtra(
+                    getString(R.string.intent_key_note_id),
+                    -1L
+                )
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val note = AppDatabase.getDatabase(applicationContext)
+                        .noteDao()
+                        .getNote(noteId)
+                    notes.add(note)
+                    val position = notes.indexOf(note)
+
+                    withContext(Dispatchers.Main) {
+                        adapter.notifyItemChanged(position)
+                    }
+                }
+            }
+        }
+
     private fun addNewNote() {
         val intent = Intent(applicationContext, NoteActivity::class.java)
-
+        intent.putExtra(
+            getString(R.string.intent_purpose_key),
+            getString(R.string.intent_purpose_add_note)
+        )
+        startForAddResult.launch(intent)
     }
 
     inner class MyViewHolder(val view: TextView) :
@@ -86,10 +115,6 @@ class MainActivity : AppCompatActivity() {
         init {
             view.setOnClickListener(this)
         }
-
-//            fun setText(text: String) {
-//                itemView.findViewById<TextView>(R.id.note_textView).setText(text)
-//            }
 
         override fun onClick(view: View?) {
             TODO("Not yet implemented")
@@ -106,7 +131,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-            holder.view.text = notes[position].toString()
+            val note = notes[position]
+            holder.view.setText("${note.title}")
         }
 
         override fun getItemCount(): Int {
